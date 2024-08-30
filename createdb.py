@@ -6,14 +6,12 @@ from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
+from dotenv import load_dotenv
 
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 
-os.environ["OPENAI_API_KEY"] = "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"
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_API_KEY"] = "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"
-
+load_dotenv()
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
 CHROMA_PATH = "chroma"
