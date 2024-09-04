@@ -1,6 +1,7 @@
 import os
 import openai
 import shutil
+import uuid 
 
 from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import DirectoryLoader
@@ -9,7 +10,8 @@ from langchain.schema import Document
 from dotenv import load_dotenv
 
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import Chroma
+# from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 
 load_dotenv()
 openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -37,11 +39,22 @@ def split_text(documents: list[Document]):
         length_function=len,
         add_start_index=True,
     )
+
+    for i, doc in enumerate(documents):
+        if "id" not in doc.metadata:
+            # Generate a unique id using uuid and assign it to the document
+            doc.metadata["id"] = str(uuid.uuid4()) 
+            
     chunks = text_splitter.split_documents(documents)
     print(f"Split {len(documents)} documents into {len(chunks)} chunks.")
+    
+    for i, chunk in enumerate(chunks):
+        # Assign chunk-specific ids based on the document id and chunk number
+        chunk.metadata["chunk_id"] = f"{chunk.metadata['id']}_chunk_{i}"
 
-    document = chunks[1]
+    document = chunks[2]
     print(document.page_content)
+    print("\n\n\n")
     print(document.metadata)
 
     return chunks
@@ -50,10 +63,14 @@ def save_to_chroma(chunks: list[Document]):
     if os.path.exists(CHROMA_PATH):
         shutil.rmtree(CHROMA_PATH)
 
-    db = Chroma.from_documents(
-        chunks, OpenAIEmbeddings(), persist_directory=CHROMA_PATH
+    db = Chroma(
+        collection_name="whatever",
+        embedding_function=OpenAIEmbeddings(),
+        persist_directory=CHROMA_PATH  # This should automatically handles persistence
     )
-    db.persist()
+
+    db.add_documents(chunks)
+
 
 if __name__ == "__main__":
     main()
