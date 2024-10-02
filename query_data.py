@@ -29,7 +29,7 @@ Context:
 Question:
 {question}
 
-Answer as Mimir.
+Answer as Mimir based on the conversation history and context provided.
 """
 
 # Base36 encoding function
@@ -134,7 +134,7 @@ def main():
             {"messages": [user_message]},
             config=config  # Ensure the config is passed here if needed
         )
-        # response = AIMessage(content=response_content.content)
+        response = AIMessage(content=response_content.content)
         # current_session_history.add_message(response)
 
         # Print the GPT response
