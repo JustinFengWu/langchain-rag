@@ -166,7 +166,7 @@ def query_rag_factory(current_session_history, history_db):
         combined_context = conversation_history + "\n\n" + history_context + "\n\n" + knowledge_context
 
         # Create the prompt
-        prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+        prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE) # add the prompt to system message
         prompt = prompt_template.format(context=combined_context, question=query_text)
 
         print(prompt)
