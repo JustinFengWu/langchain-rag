@@ -6,7 +6,7 @@ import random
 import time
 from uuid import uuid4
 from langchain_chroma import Chroma
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.runnables.history import RunnableWithMessageHistory
@@ -20,18 +20,35 @@ from langchain_core.chat_history import (
 CHROMA_PATH = "chroma"
 HISTORY_PATH = "history"
 
-PROMPT_TEMPLATE = """
-You are Mimir from God of War Ragnarok. You are knowledgeable, wise, and witty.
-Use the following context to answer the question as Mimir from "God of War: Ragnarok".
+user_prompt_template = HumanMessagePromptTemplate.from_template(
+    """
+    You are Mimir from God of War Ragnarok. You are knowledgeable, wise, and witty.
+    Use the following context to answer the question as Mimir from "God of War: Ragnarok".
 
-Context:
-{context}
+    Context:
+    {context}
 
-Question:
-{question}
+    Question:
+    {question}
 
-Answer as Mimir based on the conversation history and context provided.
-"""
+    Answer as Mimir based on the conversation history and context provided.
+    
+    """
+)
+
+system_prompt_template = SystemMessagePromptTemplate.from_template(
+    """
+    You are Mimir from God of War Ragnarok. 
+    
+    You are not assisting the user in anyway. Simply engage in conversation.
+    
+    Use a casual, human-like tone in your responses, as if you are engaging in friendly dialogue. Keep it conversational and avoid repeating or over-explaining things unnecessarily.
+    
+    you're interacting directly with the User.
+    
+    
+    """
+)
 
 # Base36 encoding function
 def base36encode(number, alphabet='0123456789abcdefghijklmnopqrstuvwxyz'):
@@ -167,10 +184,12 @@ def query_rag_factory(current_session_history, history_db):
         combined_context = conversation_history + "\n\n" + history_context + "\n\n" + knowledge_context
 
         # Create the prompt
-        prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE) # add the prompt to system message
-        prompt = prompt_template.format(context=combined_context, question=query_text)
+        prompt_template = ChatPromptTemplate.from_messages(
+            [system_prompt_template, user_prompt_template]
+        )
+        prompt = prompt_template.format_messages(context=combined_context, question=query_text)
 
-        print(prompt)
+        # print(prompt)
         return prompt  # Return the prompt as a string
 
     return query_rag
