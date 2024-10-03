@@ -18,6 +18,7 @@ from langchain_core.chat_history import (
 )
 
 CHROMA_PATH = "chroma"
+HISTORY_PATH = "history"
 
 PROMPT_TEMPLATE = """
 You are Mimir from God of War Ragnarok. You are knowledgeable, wise, and witty.
@@ -85,7 +86,7 @@ def main():
     history_db = Chroma(
         collection_name="conversation_histories",
         embedding_function=OpenAIEmbeddings(),
-        persist_directory=CHROMA_PATH
+        persist_directory=HISTORY_PATH
     )
 
     # Create current session history
