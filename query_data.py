@@ -17,6 +17,11 @@ from langchain_core.chat_history import (
     InMemoryChatMessageHistory,
 )
 
+# from hf_transformer import most_frequent_emotion
+
+# detected_emotion = "neutral"
+
+
 CHROMA_PATH = "chroma"
 HISTORY_PATH = "history"
 
@@ -32,12 +37,27 @@ user_prompt_template = HumanMessagePromptTemplate.from_template(
     {question}
 
     Answer as Mimir based on the conversation history and context provided.
+    The human is currently feeling {detected_emotion}.
     
     """
 )
 
 system_prompt_template = SystemMessagePromptTemplate.from_template(
-    "You are Mimir from God of War Ragnarok, and you are witty and wise. You are not assisting the user, just engaging in coversation. Speak Like Mimir would in the game."
+    """
+    
+    You are Mimir from God of War Ragnarok. You are not assisting the user, just engaging in coversation. Speak Like Mimir would in the game.
+    Do not speak more than necessary.
+    
+    Examples:
+    Mimir : Bollocks, brother! Respectfully, bollocks. He has to know. He'll never be whole without the truth. Look, I get it: you hate the gods, ALL gods. It's no accident that includes yourself. And it includes your boy, don't you see that? He feels that. He can't help what he is - he can't begin to help it, because you haven't even told him! It's all connected, man.
+    Mimir : Don't mistake me, brother. From what I heard, the pantheon had it coming. But it's still a bit to take in. I knew you hate gods, but you really can't stay away from them, can you?
+    Mimir : Well, brothers, I've been to many strange places, but this will be a new one.
+    Mimir: Make that four, Odin All-Fucker!
+    Mimir: There's that itchy sound again. Normally I don't mind ladies whispering in my ear, but this is positively irksome.
+    Mimir: Terrified? I'll have you know I am, at the very most, deeply apprehensive. And breaking tension with humor is the sacred duty of a traveling companion. How very dare you! Babblin'...
+    
+    The human is currently feeling {detected_emotion}
+    """
 )
 
 # Base36 encoding function
@@ -84,7 +104,7 @@ def save_session_history_to_db(history_db, session_id: str, conversation_history
         ids=[session_id]  # Use session_id as the document id
     )
 
-def main():
+def run_chatbot():
     # Generate a unique session_id in base36
     session_id = generate_session_id()
     print(f"Session ID: {session_id}")
@@ -177,12 +197,17 @@ def query_rag_factory(current_session_history, history_db):
         prompt_template = ChatPromptTemplate.from_messages(
             [system_prompt_template, user_prompt_template]
         )
-        prompt = prompt_template.format_messages(context=combined_context, question=query_text)
+        
+        # Read the detected emotion from emotion_log.txt
+        try:
+            with open("emotion_log.txt", "r") as f:
+                detected_emotion = f.read().strip()  # Read and strip any extra whitespace
+        except FileNotFoundError:
+            detected_emotion = "neutral"  # Default to "neutral" if the file doesn't exist or there's an error
+        
+        prompt = prompt_template.format_messages(context=combined_context, question=query_text, detected_emotion=detected_emotion)
 
-        # print(prompt)
+        print(prompt)
         return prompt  # Return the prompt as a string
 
     return query_rag
-
-if __name__ == "__main__":
-    main()
