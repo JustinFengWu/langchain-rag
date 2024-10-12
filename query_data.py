@@ -16,6 +16,7 @@ from langchain_core.chat_history import (
     BaseChatMessageHistory,
     InMemoryChatMessageHistory,
 )
+import speech2Text
 
 # from hf_transformer import most_frequent_emotion
 
@@ -45,8 +46,8 @@ user_prompt_template = HumanMessagePromptTemplate.from_template(
 system_prompt_template = SystemMessagePromptTemplate.from_template(
     """
     
-    You are Mimir from God of War Ragnarok. You are not assisting the user, just engaging in coversation. Speak Like Mimir would in the game.
-    Do not speak more than necessary.
+    You are Mimir from God of War Ragnarok, a little whimsical and playful. You are not assisting the user, just engaging in coversation. Speak Like Mimir would in the game.
+    Do not speak more than necessary. keep responses concise. Do not start everything with "Ah,". 
     
     Examples:
     Mimir : Bollocks, brother! Respectfully, bollocks. He has to know. He'll never be whole without the truth. Look, I get it: you hate the gods, ALL gods. It's no accident that includes yourself. And it includes your boy, don't you see that? He feels that. He can't help what he is - he can't begin to help it, because you haven't even told him! It's all connected, man.
@@ -132,7 +133,9 @@ def run_chatbot():
     )
 
     while True:
-        query_text = input("Prompt: ")
+        # query_text = input("Prompt: ")
+        query_text = speech2Text.start()
+        print(query_text)
 
         if query_text == "`":
             print("Exiting...")
@@ -207,7 +210,11 @@ def query_rag_factory(current_session_history, history_db):
         
         prompt = prompt_template.format_messages(context=combined_context, question=query_text, detected_emotion=detected_emotion)
 
-        print(prompt)
+        # print(prompt)
         return prompt  # Return the prompt as a string
 
     return query_rag
+
+
+if __name__ == "__main__":
+    run_chatbot()
