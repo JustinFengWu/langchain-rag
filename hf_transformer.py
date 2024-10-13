@@ -67,3 +67,6 @@ def run_emotion_detection():
     # Close video capture after exiting loop
     cap.release()
     cv2.destroyAllWindows()
+    
+if __name__ == "__main__":
+    run_emotion_detection()

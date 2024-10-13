@@ -137,7 +137,7 @@ def run_chatbot():
         query_text = speech2Text.start()
         print(query_text)
 
-        if query_text == "`":
+        if query_text == "Exit.":
             print("Exiting...")
 
             # Build the conversation history text

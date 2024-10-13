@@ -147,7 +147,7 @@ def transcribe_audio(file_path):
 
 # Key press and release events to handle recording
 def on_press(key):
-    global is_recording, stream, should_terminate
+    global is_recording, stream, should_terminate, transcript
     try:
         if key.char == '\\':  # Start/stop recording on backslash press
             if not is_recording:
@@ -161,8 +161,18 @@ def on_press(key):
                 print("Transcription:", transcription)
                 should_terminate = True  # Set termination flag to True
                 return False  # Stop the listener to terminate the program
+            
     except AttributeError:
+        # This block will only catch special keys like ESC that don't have a char attribute
         pass
+
+    # Check if the ESC key is pressed (special key)
+    if key == keyboard.Key.esc:
+        # When ESC is pressed, print 'Exit'
+        transcript = "Exit."
+        print("Transcription:", transcript)
+        should_terminate = True  # Set termination flag to True
+        return False  # Stop the listener to terminate the program
 
 def on_release(key):
     if key == keyboard.Key.esc:

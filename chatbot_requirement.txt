@@ -1,0 +1,14 @@
+langchain
+openai
+chromadb
+uuid
+langchain_chroma
+langchain_core
+langchain_openai
+transformers
+sounddevice
+pynput
+torch
+opencv-python
+langchain_community
+python-magic-bin

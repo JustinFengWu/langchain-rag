@@ -60,8 +60,8 @@ def split_text(documents: list[Document]):
     return chunks
 
 def save_to_chroma(chunks: list[Document]):
-    if os.path.exists(CHROMA_PATH):
-        shutil.rmtree(CHROMA_PATH)
+    # if os.path.exists(CHROMA_PATH):
+    #     shutil.rmtree(CHROMA_PATH)
 
     db = Chroma(
         collection_name="whatever",
