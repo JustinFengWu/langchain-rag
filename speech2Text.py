@@ -141,8 +141,8 @@ def transcribe_audio(file_path):
         file=audio_file,
         response_format="text"
     )
-    print("Transcription complete.")
-    print(transcript)
+    # print("Transcription complete.")
+    # print(transcript)
     return transcript
 
 # Key press and release events to handle recording
@@ -158,7 +158,7 @@ def on_press(key):
                 stop_recording(stream, "output.wav")
                 # Transcribe the recorded audio
                 transcription = transcribe_audio("output.wav")
-                print("Transcription:", transcription)
+                # print("Transcription:", transcription)
                 should_terminate = True  # Set termination flag to True
                 return False  # Stop the listener to terminate the program
             

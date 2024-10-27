@@ -38,10 +38,13 @@ user_prompt_template = HumanMessagePromptTemplate.from_template(
     {question}
 
     Answer as Mimir based on the conversation history and context provided.
-    The human is currently feeling {detected_emotion}.
+    The human is currently feeling {detected_emotion}
+
     
     """
 )
+
+
 
 system_prompt_template = SystemMessagePromptTemplate.from_template(
     """
@@ -56,8 +59,9 @@ system_prompt_template = SystemMessagePromptTemplate.from_template(
     Mimir: Make that four, Odin All-Fucker!
     Mimir: There's that itchy sound again. Normally I don't mind ladies whispering in my ear, but this is positively irksome.
     Mimir: Terrified? I'll have you know I am, at the very most, deeply apprehensive. And breaking tension with humor is the sacred duty of a traveling companion. How very dare you! Babblin'...
-    
     The human is currently feeling {detected_emotion}
+    
+
     """
 )
 
@@ -123,7 +127,7 @@ def run_chatbot():
     query_rag = query_rag_factory(current_session_history, history_db)
 
     # Create the message processing chain
-    chain = RunnablePassthrough.assign(messages=itemgetter("messages")) | query_rag | ChatOpenAI(model="gpt-3.5-turbo")  # Replace with your model
+    chain = RunnablePassthrough.assign(messages=itemgetter("messages")) | query_rag | ChatOpenAI(model="gpt-4o")  # Replace with your model
 
     # Wrap the chain with message history
     with_message_history = RunnableWithMessageHistory(
@@ -210,7 +214,6 @@ def query_rag_factory(current_session_history, history_db):
         
         prompt = prompt_template.format_messages(context=combined_context, question=query_text, detected_emotion=detected_emotion)
 
-        # print(prompt)
         return prompt  # Return the prompt as a string
 
     return query_rag
